@@ -8,58 +8,32 @@ import weka.classifiers.Evaluation;
 import weka.classifiers.trees.J48;
 import weka.core.Instances;
 
-// Main class
-// BreastCancer
+// Heart disease
 public class GFG {
 
-	// Main driver method
-	public static void main(String args[])
-	{
-
-		// Try block to check for exceptions
+	public static void main(String args[]) {
 		try {
 
-			// Create J48 classifier by
-			// creating object of J48 class
-			J48 j48Classifier = new J48();
+			
+			J48 j48Classifier = new J48();	// Create J48 classifier by creating object of J48 class
 
-			// Dataset path
-			String breastCancerDataset
-				= "/home/lsi/Descargas/heart-c.arff";
+			String heartDiseaseDataset = "/home/lsi/Descargas/heart-c.arff";	// Dataset path
 
-			// Creating bufferedreader to read the dataset
-			BufferedReader bufferedReader
-				= new BufferedReader(
-					new FileReader(breastCancerDataset));
+			BufferedReader bufferedReader = new BufferedReader(new FileReader(heartDiseaseDataset));	// Creating bufferedreader to read the dataset
 
-			// Create dataset instances
-			Instances datasetInstances
-				= new Instances(bufferedReader);
+			Instances datasetInstances = new Instances(bufferedReader);	// Create dataset instances
+			
+			datasetInstances.setClassIndex(datasetInstances.numAttributes() - 1);	// Set Target Class
+			
+			Evaluation evaluation = new Evaluation(datasetInstances);	// Evaluating by creating object of Evaluation class
+			evaluation.crossValidateModel(j48Classifier, datasetInstances, 10, new Random(1)); // Cross Validate Model with 10 folds
 
-			// Set Target Class
-			datasetInstances.setClassIndex(
-				datasetInstances.numAttributes() - 1);
-
-			// Evaluating by creating object of Evaluation
-			// class
-			Evaluation evaluation
-				= new Evaluation(datasetInstances);
-
-			// Cross Validate Model with 10 folds
-			evaluation.crossValidateModel(
-				j48Classifier, datasetInstances, 10,
-				new Random(1));
-
-			System.out.println(evaluation.toSummaryString(
-				"\nResults", false));
+			System.out.println(evaluation.toSummaryString("\nResults", false));
 		}
 
-		// Catch block to handle the exceptions
 		catch (Exception e) {
-
 			// Print message on the console
-			System.out.println("Error Occurred!!!! \n"
-							+ e.getMessage());
+			System.out.println("Errore bat gertatu da! \n" + e.getMessage());
 		}
 	}
 }
