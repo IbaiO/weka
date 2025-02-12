@@ -23,7 +23,7 @@ public class DataMiningExample {
 		/////////////////////////////////////////////////////////////
 	    DataSource source = null;
 		try {
-			source = new DataSource("/home/lsi/Descargas/heart-c.arff"); 
+			source = new DataSource("/home/ibai/Deskargak/heart-c.arff"); 
 		} catch (FileNotFoundException e) {
 			System.out.println("ERROR: Revisar path del fichero de datos:"+args[0]);
 		}
