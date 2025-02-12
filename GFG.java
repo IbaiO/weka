@@ -17,7 +17,7 @@ public class GFG {
 			
 			J48 j48Classifier = new J48();	// Create J48 classifier by creating object of J48 class
 
-			String heartDiseaseDataset = "/home/lsi/Descargas/heart-c.arff";	// Dataset path
+			String heartDiseaseDataset = "/home/ibai/Deskargak/heart-c.arff";	// Dataset path
 
 			BufferedReader bufferedReader = new BufferedReader(new FileReader(heartDiseaseDataset));	// Creating bufferedreader to read the dataset
 
