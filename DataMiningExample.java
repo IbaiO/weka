@@ -8,22 +8,22 @@ public class DataMiningExample {
     public static void main(String[] args) throws Exception {
         Instances data = loadData("/home/ibai/Deskargak/heart-c.arff");
         if (data == null) return;
-        kfCV.perform5FoldCV(data, args[1], args);
+        String outputPath = "/home/ibai/Dokumentuak/weka/heart-disease-results.txt";
+        kfCV.perform5FoldCV(data, outputPath, args);
     }
     
     private static Instances loadData(String filePath) {
         DataSource source = null;
         try {
             source = new DataSource(filePath);
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             System.out.println("ERROR: File not found: " + filePath);
             return null;
         }
-        
         Instances data = null;
         try {
             data = source.getDataSet();
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println("ERROR: Unable to read the file: " + filePath);
             return null;
         }

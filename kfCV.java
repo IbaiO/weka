@@ -23,6 +23,7 @@ public class kfCV {
                     writer.write(value + "\t");
                 }
                 writer.write("\n");
+                
             }
             writer.write("\n");
 
@@ -44,4 +45,11 @@ public class kfCV {
             System.out.println("ERROR: Unable to write to the file: " + outputPath);
         }
     }
+
+    /*public static void main(String[] args) {
+        String outputPath = "/home/ibai/Dokumentuak/weka";
+        Instances data = loadData("/home/ibai/Deskargak/heart-c.arff");
+        perform5FoldCV(data, outputPath, args);
+    }
+    */
 }

@@ -1,0 +1,26 @@
+Execution Date: Thu Feb 13 17:22:18 CET 2025
+Execution Arguments: 
+
+Confusion Matrix:
+143.0	22.0	0.0	0.0	0.0	
+29.0	109.0	0.0	0.0	0.0	
+0.0	0.0	0.0	0.0	0.0	
+0.0	0.0	0.0	0.0	0.0	
+0.0	0.0	0.0	0.0	0.0	
+
+Precision Metrics:
+Class 0: 0.8313953488372093
+Class 1: 0.8320610687022901
+Class 2: NaN
+Class 3: NaN
+Class 4: NaN
+Weighted Avg: 0.8316985479836818
+
+Evaluation Results:
+Correctly Classified Instances: 83.16831683168317
+Incorrectly Classified Instances: 16.831683168316832
+Kappa Statistic: 0.6592577892438976
+Mean Absolute Error: 0.07456573127260988
+Root Mean Squared Error: 0.23104497105046554
+Relative Absolute Error: 37.12089070662883
+Root Relative Squared Error: 73.34390136041304

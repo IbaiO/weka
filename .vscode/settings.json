@@ -1,6 +1,7 @@
 {
     "java.project.referencedLibraries": [
         "/home/ibai/Dokumentuak/weka/weka.jar",
-        "/home/ibai/weka-3-8-5/weka.jar"
+        "/home/ibai/weka-3-8-5/weka.jar",
+        "lib/weka.jar"
     ]
 }
