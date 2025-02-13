@@ -2,26 +2,24 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
-import weka.core.converters.ConverterUtils.DataSource;
-import java.util.Random;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.core.Instances;
+import weka.core.converters.ConverterUtils.DataSource;
 
-public class kfCV {
-
+public class EzZintzoa {
     public static void main(String[] args) throws Exception {
         Instances data = loadData("/home/ibai/Deskargak/heart-c.arff");
         if (data == null) return;
-        String outputPath = "/home/ibai/Dokumentuak/weka/k-fold-results.txt";
-        int k = 5;
-        kfCV.erabili_kFold(data, outputPath, args, k);
+        String outputPath = "/home/ibai/Dokumentuak/weka/ez-zintzoa-results.txt";
+        EzZintzoa.erabili_ez_zintzoa(data, outputPath, args);
     }
 
-    public static void erabili_kFold(Instances data, String outputPath, String[] args, int k) throws Exception {
+    public static void erabili_ez_zintzoa(Instances data, String outputPath, String[] args) throws Exception {
         NaiveBayes estimator = new NaiveBayes();
+        estimator.buildClassifier(data);
         Evaluation evaluator = new Evaluation(data);
-        evaluator.crossValidateModel(estimator, data, k, new Random(1));
+        evaluator.evaluateModel(estimator, data);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath))) {
             writer.write("Execution Date: " + new Date() + "\n");
