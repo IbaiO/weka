@@ -22,9 +22,9 @@ public class EzZintzoa {
         evaluator.evaluateModel(estimator, data);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath))) {
-            writer.write("Execution Date: " + new Date() + "\n");
-            writer.write("Execution Arguments: " + String.join(", ", args) + "\n\n");
-            writer.write("Confusion Matrix:\n");
+            //writer.write("Execution Date: " + new Date() + "\n");
+            writer.write("Argumentuak: " + String.join(", ", args) + "\n\n");
+            writer.write("Nahasmen matrizea:\n");
             double[][] confMatrix = evaluator.confusionMatrix();
             for (double[] row : confMatrix) {
                 for (double value : row) {
@@ -34,22 +34,45 @@ public class EzZintzoa {
             }
             writer.write("\n");
 
-            writer.write("Precision Metrics:\n");
+            writer.write("Ebaluazio metrikak:\n");
             for (int i = 0; i < data.numClasses(); i++) {
-                writer.write("Class " + i + ": " + evaluator.precision(i) + "\n");
+                writer.write("Klasea: " + i + " --> " + evaluator.precision(i) + "\n");
             }
+
+            // Add formulas for Precision, Recall, Accuracy, and F-measure
+            writer.write("Metrics:\n");
+            for (int i = 0; i < data.numClasses(); i++) {
+                double tp = evaluator.numTruePositives(i);
+                double fp = evaluator.numFalsePositives(i);
+                double fn = evaluator.numFalseNegatives(i);
+                double tn = evaluator.numTrueNegatives(i);
+
+                double precision = tp / (tp + fp);
+                double recall = tp / (tp + fn);
+                double accuracy = (tp + tn) / (tp + tn + fp + fn);
+                double fMeasure = (2 * precision * recall) / (precision + recall);
+
+                writer.write("Class " + i + ":\n");
+                writer.write("Precision: " + precision + "\n");
+                writer.write("Recall: " + recall + "\n");
+                writer.write("Accuracy: " + accuracy + "\n");
+                writer.write("F-Measure: " + fMeasure + "\n\n");
+            }
+
+            /* 
             writer.write("Weighted Avg: " + evaluator.weightedPrecision() + "\n\n");
 
-            writer.write("Evaluation Results:\n");
-            writer.write("Correctly Classified Instances: " + evaluator.pctCorrect() + "\n");
-            writer.write("Incorrectly Classified Instances: " + evaluator.pctIncorrect() + "\n");
+            writer.write("Ebaluazio emaitzak:\n");
+            writer.write("Zuzen klasifikatutako emaitzak: " + evaluator.pctCorrect() + "\n");
+            writer.write("Oker klasifikatutako emaitzak: " + evaluator.pctIncorrect() + "\n");
             writer.write("Kappa Statistic: " + evaluator.kappa() + "\n");
-            writer.write("Mean Absolute Error: " + evaluator.meanAbsoluteError() + "\n");
+            writer.write("Batazbesteko errore absolutua: " + evaluator.meanAbsoluteError() + "\n");
             writer.write("Root Mean Squared Error: " + evaluator.rootMeanSquaredError() + "\n");
-            writer.write("Relative Absolute Error: " + evaluator.relativeAbsoluteError() + "\n");
+            writer.write("Errore absolutu erlatiboa: " + evaluator.relativeAbsoluteError() + "\n");
             writer.write("Root Relative Squared Error: " + evaluator.rootRelativeSquaredError() + "\n");
+            */
         } catch (IOException e) {
-            System.out.println("ERROR: Unable to write to the file: " + outputPath);
+            System.out.println("ERROR: Fitxategia ezin izan da irakurri: " + outputPath);
         }
     }
 
@@ -58,14 +81,14 @@ public class EzZintzoa {
         try {
             source = new DataSource(filePath);
         } catch (Exception e) {
-            System.out.println("ERROR: File not found: " + filePath);
+            System.out.println("ERROR: Fitxategia ez da aurkitu: " + filePath);
             return null;
         }
         Instances data = null;
         try {
             data = source.getDataSet();
         } catch (Exception e) {
-            System.out.println("ERROR: Unable to read the file: " + filePath);
+            System.out.println("ERROR: Fitxategia ezin izan da irakurri: " + filePath);
             return null;
         }
         
