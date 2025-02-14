@@ -20,7 +20,7 @@ public class StratifiedHoldOut {
     public static void erabili_StratifiedHoldOut(Instances data, String outputPath, String[] args, double trainSize) throws Exception {
         // Randomize and stratify the data
         data.randomize(new Random(1));
-        data.stratify((int) (1 / (1 - trainSize)));
+        data.stratify((int) Math.round(1 / (1 - trainSize)));
 
         int trainSizeInt = (int) Math.round(data.numInstances() * trainSize);
         int testSizeInt = data.numInstances() - trainSizeInt;
