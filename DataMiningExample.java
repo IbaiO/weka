@@ -1,13 +1,10 @@
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Random;
 import weka.attributeSelection.BestFirst;
 import weka.attributeSelection.CfsSubsetEval;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
-import weka.classifiers.lazy.IBk;
-import weka.core.Capabilities;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.filters.Filter;
@@ -65,7 +62,7 @@ public class DataMiningExample {
 		double rmse=evaluator.rootMeanSquaredError();
 		double rae=evaluator.relativeAbsoluteError();
 		double rrse=evaluator.rootRelativeSquaredError();
-		double confMatrix[][]= evaluator.confusionMatrix();
+		//double confMatrix[][]= evaluator.confusionMatrix();
 		
 		System.out.println("Correctly Classified Instances  " + acc);
 		System.out.println("Incorrectly Classified Instances  " + inc);
