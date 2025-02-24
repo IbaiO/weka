@@ -41,6 +41,7 @@ public class KNN {
         int bestW = IBk.WEIGHT_NONE;
 
         for (int k = 1; k <= numInstances; k++) {
+            System.out.println("K = " + k+ "; Hoberena: " + bestK);
             for (int d : distanceFunctions) {
                 for (int w : distanceWeighting) {
                     IBk model = new IBk(k);
