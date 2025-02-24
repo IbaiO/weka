@@ -7,11 +7,16 @@ import weka.classifiers.lazy.IBk;
 import weka.core.Instances;
 import weka.core.SelectedTag;
 import weka.core.converters.ConverterUtils.DataSource;
+import weka.core.neighboursearch.LinearNNSearch;
+import weka.core.neighboursearch.CoverTree;
+import weka.core.neighboursearch.KDTree;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.ReplaceMissingValues;
 
 public class KNN {
 
     public static void main(String[] args) throws Exception {
-/* 
+ 
         if (args.length < 2) {
             System.out.println("ERROR: Please provide the path to the data file and the output file.");
             return;
@@ -19,30 +24,40 @@ public class KNN {
 
         String dataFilePath = args[0];
         String outputPath = args[1];
-        */
-
-        String dataFilePath = "/home/ibai/Deskargak/heart-c.arff";
-        String outputPath = "/home/ibai/Dokumentuak/weka/knn-emiatza.txt";
 
         Instances data = loadData(dataFilePath);
         if (data == null) return;
 
-        int[] kValues = {1, 3, 5, 7, 9, 11, 13, 15};
+        // Replace missing values
+        data = replaceMissingValues(data);
+
+        int numInstances = data.numInstances();
+        int[] distanceFunctions = {0, 1, 2}; // 0: LinearNNSearch, 1: CoverTree, 2: KDTree
         int[] distanceWeighting = {IBk.WEIGHT_NONE, IBk.WEIGHT_INVERSE, IBk.WEIGHT_SIMILARITY};
-        int[] windowSizes = {0, 50, 100, 150, 200};
 
         double bestFMeasure = 0;
         int bestK = 1;
-        int bestD = IBk.WEIGHT_NONE;
-        int bestW = 0;
+        int bestD = 0;
+        int bestW = IBk.WEIGHT_NONE;
 
-        for (int k : kValues) {
-            for (int d : distanceWeighting) {
-                for (int w : windowSizes) {
+        for (int k = 1; k <= numInstances; k++) {
+            for (int d : distanceFunctions) {
+                for (int w : distanceWeighting) {
                     IBk model = new IBk(k);
-                    model.setDistanceWeighting(new SelectedTag(d, IBk.TAGS_WEIGHTING));
-                    model.setWindowSize(w);
+                    switch (d) {
+                        case 0:
+                            model.setNearestNeighbourSearchAlgorithm(new LinearNNSearch());
+                            break;
+                        case 1:
+                            model.setNearestNeighbourSearchAlgorithm(new CoverTree());
+                            break;
+                        case 2:
+                            model.setNearestNeighbourSearchAlgorithm(new KDTree());
+                            break;
+                    }
+                    model.setDistanceWeighting(new SelectedTag(w, IBk.TAGS_WEIGHTING));
 
+                    model.buildClassifier(data);
                     Evaluation evaluation = evaluateModel(data, model);
                     double fMeasure = evaluation.weightedFMeasure();
 
@@ -64,14 +79,14 @@ public class KNN {
         try {
             source = new DataSource(filePath);
         } catch (Exception e) {
-            System.out.println("ERROR: File not found: " + filePath);
+            System.out.println("ERROREA: Ezin izandu da " + filePath + " fitxategia irakurri.");
             return null;
         }
         Instances data = null;
         try {
             data = source.getDataSet();
         } catch (Exception e) {
-            System.out.println("ERROR: Unable to read the file: " + filePath);
+            System.out.println("ERROREA: Ezin izandu da " + filePath + " fitxategia irakurri.");
             return null;
         }
 
@@ -79,6 +94,12 @@ public class KNN {
             data.setClassIndex(data.numAttributes() - 1);
 
         return data;
+    }
+
+    private static Instances replaceMissingValues(Instances data) throws Exception {
+        ReplaceMissingValues replaceMissing = new ReplaceMissingValues();
+        replaceMissing.setInputFormat(data);
+        return Filter.useFilter(data, replaceMissing);
     }
 
     private static Evaluation evaluateModel(Instances data, IBk model) throws Exception {
@@ -91,11 +112,11 @@ public class KNN {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath))) {
             writer.write("Parametrorik hoberenak:\n");
             writer.write("      Auzokide kopurua: " + bestK + "\n");
-            writer.write("      M etrika: " + (bestD == IBk.WEIGHT_NONE ? "None" : bestD == IBk.WEIGHT_INVERSE ? "Inverse" : "Similarity") + "\n");
-            writer.write("      Distantziaren ponderazio faktorea: " + bestW + "\n");
-            writer.write("      F-Measure hoberena: " + bestFMeasure + "\n");
+            writer.write("      Metrika: " + (bestD == 0 ? "LinearNNSearch" : bestD == 1 ? "CoverTree" : "KDTree") + "\n");
+            writer.write("      Distantziaren ponderazio faktorea: " + (bestW == IBk.WEIGHT_NONE ? "None" : bestW == IBk.WEIGHT_INVERSE ? "Inverse" : "Similarity") + "\n");
+            writer.write("      F-Measure: " + bestFMeasure);
         } catch (IOException e) {
-            System.out.println("ERROR: Unable to write to the file: " + outputPath);
+            System.out.println("ERROREA: Ezin izandu da " + outputPath + " fitxategian idatzi.");
         }
     }
 }
