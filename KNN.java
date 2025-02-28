@@ -26,10 +26,17 @@ public class KNN {
         String outputPath = args[1];
 
         Instances data = loadData(dataFilePath);
-        if (data == null) return;
+        if (data == null) {
+            System.out.println("ERROR: Failed to load data.");
+            return;
+        }
 
         // Replace missing values
         data = replaceMissingValues(data);
+        if (data == null) {
+            System.out.println("ERROR: Failed to replace missing values.");
+            return;
+        }
 
         int numInstances = data.numInstances();
         int[] distanceFunctions = {0, 1, 2}; // 0: LinearNNSearch, 1: CoverTree, 2: KDTree
@@ -91,6 +98,11 @@ public class KNN {
             return null;
         }
 
+        if (data == null) {
+            System.out.println("ERROREA: Ezin izandu da " + filePath + " fitxategia irakurri.");
+            return null;
+        }
+
         if (data.classIndex() == -1)
             data.setClassIndex(data.numAttributes() - 1);
 
@@ -100,7 +112,12 @@ public class KNN {
     private static Instances replaceMissingValues(Instances data) throws Exception {
         ReplaceMissingValues replaceMissing = new ReplaceMissingValues();
         replaceMissing.setInputFormat(data);
-        return Filter.useFilter(data, replaceMissing);
+        Instances newData = Filter.useFilter(data, replaceMissing);
+        if (newData == null) {
+            System.out.println("ERROREA: Ezin izandu da balio galduak ordezkatu.");
+            return null;
+        }
+        return newData;
     }
 
     private static Evaluation evaluateModel(Instances data, IBk model) throws Exception {
