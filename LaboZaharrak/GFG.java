@@ -1,3 +1,4 @@
+package LaboZaharrak;
 // Java Program to Illustrate Usage of Weka API
 
 // Importing required classes

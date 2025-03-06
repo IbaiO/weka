@@ -1,35 +1,25 @@
+package LaboZaharrak;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Random;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 
-public class HoldOut {
-
+public class EzZintzoa {
     public static void main(String[] args) throws Exception {
         Instances data = loadData("/home/ibai/Deskargak/heart-c.arff");
         if (data == null) return;
-        String outputPath = "/home/ibai/Dokumentuak/weka/hold-out-results.txt";
-        double trainSize = 0.66;
-        HoldOut.erabili_HoldOut(data, outputPath, args, trainSize);
+        String outputPath = "/home/ibai/Dokumentuak/weka/ez-zintzoa-results.txt";
+        EzZintzoa.erabili_ez_zintzoa(data, outputPath, args);
     }
 
-    public static void erabili_HoldOut(Instances data, String outputPath, String[] args, double trainSize) throws Exception {
-        // Randomize the data
-        data.randomize(new Random(1));
-
-        int trainSizeInt = (int) Math.round(data.numInstances() * trainSize);
-        int testSizeInt = data.numInstances() - trainSizeInt;
-        Instances train = new Instances(data, 0, trainSizeInt);
-        Instances test = new Instances(data, trainSizeInt, testSizeInt);
-
+    public static void erabili_ez_zintzoa(Instances data, String outputPath, String[] args) throws Exception {
         NaiveBayes estimator = new NaiveBayes();
-        estimator.buildClassifier(train);
-        Evaluation evaluator = new Evaluation(train);
-        evaluator.evaluateModel(estimator, test);
+        estimator.buildClassifier(data);
+        Evaluation evaluator = new Evaluation(data);
+        evaluator.evaluateModel(estimator, data);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath))) {
             //writer.write("Execution Date: " + new Date() + "\n");

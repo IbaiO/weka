@@ -1,26 +1,37 @@
+package LaboZaharrak;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import weka.core.converters.ConverterUtils.DataSource;
 import java.util.Random;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.core.Instances;
+import weka.core.converters.ConverterUtils.DataSource;
 
-public class kfCV {
+public class StratifiedHoldOut {
 
     public static void main(String[] args) throws Exception {
         Instances data = loadData("/home/ibai/Deskargak/heart-c.arff");
         if (data == null) return;
-        String outputPath = "/home/ibai/Dokumentuak/weka/k-fold-results.txt";
-        int k = 5;
-        kfCV.erabili_kFold(data, outputPath, args, k);
+        String outputPath = "/home/ibai/Dokumentuak/weka/stratified-hold-out-results.txt";
+        double trainSize = 0.66;
+        StratifiedHoldOut.erabili_StratifiedHoldOut(data, outputPath, args, trainSize);
     }
 
-    public static void erabili_kFold(Instances data, String outputPath, String[] args, int k) throws Exception {
+    public static void erabili_StratifiedHoldOut(Instances data, String outputPath, String[] args, double trainSize) throws Exception {
+        // Randomize and stratify the data
+        data.randomize(new Random(1));
+        data.stratify((int) Math.round(1 / (1 - trainSize)));
+
+        int trainSizeInt = (int) Math.round(data.numInstances() * trainSize);
+        int testSizeInt = data.numInstances() - trainSizeInt;
+        Instances train = new Instances(data, 0, trainSizeInt);
+        Instances test = new Instances(data, trainSizeInt, testSizeInt);
+
         NaiveBayes estimator = new NaiveBayes();
-        Evaluation evaluator = new Evaluation(data);
-        evaluator.crossValidateModel(estimator, data, k, new Random(1));
+        estimator.buildClassifier(train);
+        Evaluation evaluator = new Evaluation(train);
+        evaluator.evaluateModel(estimator, test);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath))) {
             //writer.write("Execution Date: " + new Date() + "\n");

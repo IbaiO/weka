@@ -1,3 +1,4 @@
+package LaboZaharrak;
 import weka.classifiers.Evaluation;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
