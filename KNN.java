@@ -16,7 +16,6 @@ import weka.filters.unsupervised.attribute.ReplaceMissingValues;
 public class KNN {
 
     public static void main(String[] args) throws Exception {
- 
         if (args.length < 2) {
             System.out.println("ERROR: Please provide the path to the data file and the output file.");
             return;
@@ -31,12 +30,24 @@ public class KNN {
             return;
         }
 
+        System.out.println("Number of instances: " + data.numInstances());
+        System.out.println("Number of attributes: " + data.numAttributes());
+        System.out.println("Class attribute: " + data.classAttribute());
+        System.out.println("Number of classes: " + data.numClasses());
+
         // Replace missing values
         data = replaceMissingValues(data);
         if (data == null) {
             System.out.println("ERROR: Failed to replace missing values.");
             return;
         }
+
+        // Ensure class index is set correctly after replacing missing values
+        if (data.classIndex() == -1) {
+            data.setClassIndex(data.numAttributes() - 1);
+        }
+        System.out.println("Class index set to: " + data.classIndex());
+        System.out.println("Number of classes after replacing missing values: " + data.numClasses());
 
         int numInstances = data.numInstances();
         int[] distanceFunctions = {0, 1, 2}; // 0: LinearNNSearch, 1: CoverTree, 2: KDTree
@@ -46,9 +57,9 @@ public class KNN {
         int bestK = 1;
         int bestD = 0;
         int bestW = IBk.WEIGHT_NONE;
+        System.out.print("Lanean... ");
 
         for (int k = 1; k <= numInstances; k++) {
-            System.out.println("K = " + k+ "; Hoberena: " + bestK);
             for (int d : distanceFunctions) {
                 for (int w : distanceWeighting) {
                     IBk model = new IBk(k);
@@ -66,9 +77,24 @@ public class KNN {
                     model.setDistanceWeighting(new SelectedTag(w, IBk.TAGS_WEIGHTING));
 
                     model.buildClassifier(data);
-                    Evaluation evaluation = evaluateModel(data, model);
-                    double fMeasure = evaluation.weightedFMeasure();
+                    /* */
+                    if (model == null || data == null) {
+                        System.out.println("ERROR: Model or data is null.");
+                        continue;
+                    }
 
+                    if (data.classIndex() == -1) {
+                        System.out.println("ERROR: Class index is not set.");
+                        continue;
+                    }
+
+                    Evaluation evaluation = evaluateModel(data, model);
+                    if (evaluation == null) {
+                        System.out.println("ERROR: Evaluation failed.");
+                        continue;
+                    }
+
+                    double fMeasure = evaluation.weightedFMeasure();
                     if (fMeasure > bestFMeasure) {
                         bestFMeasure = fMeasure;
                         bestK = k;
@@ -80,6 +106,7 @@ public class KNN {
         }
 
         saveResults(outputPath, bestK, bestD, bestW, bestFMeasure);
+        System.out.println("Apañau 👍");
     }
 
     private static Instances loadData(String filePath) {
@@ -106,6 +133,7 @@ public class KNN {
         if (data.classIndex() == -1)
             data.setClassIndex(data.numAttributes() - 1);
 
+        System.out.println("Class index set to: " + data.classIndex());
         return data;
     }
 
@@ -114,13 +142,25 @@ public class KNN {
         replaceMissing.setInputFormat(data);
         Instances newData = Filter.useFilter(data, replaceMissing);
         if (newData == null) {
-            System.out.println("ERROREA: Ezin izandu da balio galduak ordezkatu.");
+            System.out.println("ERROREA: Ezin izandu dira balio galduak ordezkatu.");
             return null;
         }
         return newData;
     }
 
     private static Evaluation evaluateModel(Instances data, IBk model) throws Exception {
+        if (data == null || model == null) {
+            System.out.println("ERROR: Data or model is null.");
+            return null;
+        }
+        if (data.classIndex() == -1) {
+            System.out.println("ERROR: Class index is not set.");
+            return null;
+        }
+        if (data.numClasses() < 2) {
+            System.out.println("ERROR: Not enough classes in the data (" + data.numClasses() + ").");
+            return null;
+        }
         Evaluation evaluation = new Evaluation(data);
         evaluation.crossValidateModel(model, data, 10, new Random(1));
         return evaluation;
