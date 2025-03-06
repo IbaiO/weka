@@ -5,8 +5,7 @@ import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.core.converters.ArffSaver;
 import weka.filters.Filter;
-import weka.filters.unsupervised.instance.RemovePercentage;
-import weka.filters.unsupervised.attribute.ReplaceWithMissingValue;
+import weka.filters.supervised.instance.Resample;
 
 public class Stratified70percentSplit {
 
@@ -69,23 +68,26 @@ public class Stratified70percentSplit {
     }
 
     private static Instances createTrainData(Instances data) throws Exception {
-        RemovePercentage removePercentage = new RemovePercentage();
-        removePercentage.setPercentage(30);
-        removePercentage.setInputFormat(data);
-        return Filter.useFilter(data, removePercentage);
+        Resample resample = new Resample();
+        resample.setBiasToUniformClass(1.0);
+        resample.setNoReplacement(true);
+        resample.setSampleSizePercent(70);
+        resample.setInputFormat(data);
+        return Filter.useFilter(data, resample);
     }
 
     private static Instances createTestData(Instances data) throws Exception {
-        RemovePercentage removePercentage = new RemovePercentage();
-        removePercentage.setPercentage(30);
-        removePercentage.setInvertSelection(true);
-        removePercentage.setInputFormat(data);
-        Instances testData = Filter.useFilter(data, removePercentage);
+        Resample resample = new Resample();
+        resample.setNoReplacement(true);
+        resample.setSampleSizePercent(30);
+        resample.setInvertSelection(true);
+        resample.setInputFormat(data);
+        Instances testData = Filter.useFilter(data, resample);
 
-        ReplaceWithMissingValue replaceWithMissingValue = new ReplaceWithMissingValue();
-        replaceWithMissingValue.setAttributeIndices("" + (data.classIndex() + 1));
-        replaceWithMissingValue.setInputFormat(testData);
-        return Filter.useFilter(testData, replaceWithMissingValue);
+        for (int i = 0; i < testData.numInstances(); i++) {
+            testData.instance(i).setClassMissing();
+        }
+        return testData;
     }
 
     private static void saveData(Instances data, String filePath) {

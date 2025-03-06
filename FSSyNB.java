@@ -1,9 +1,9 @@
 import java.io.IOException;
 
-import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
 import weka.attributeSelection.AttributeSelection;
-import weka.attributeSelection.Ranker;
+import weka.attributeSelection.CfsSubsetEval;
+import weka.attributeSelection.BestFirst;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
@@ -73,8 +73,8 @@ public class FSSyNB {
 
     private static Instances selectAttributes(Instances data) throws Exception {
         AttributeSelection attributeSelection = new AttributeSelection();
-        ASSearch search = new Ranker();
-        ASEvaluation eval = new weka.attributeSelection.InfoGainAttributeEval();
+        ASSearch search = new BestFirst();
+        CfsSubsetEval eval = new CfsSubsetEval();
         attributeSelection.setSearch(search);
         attributeSelection.setEvaluator(eval);
         attributeSelection.SelectAttributes(data);

@@ -77,7 +77,7 @@ public class KNN {
                     model.setDistanceWeighting(new SelectedTag(w, IBk.TAGS_WEIGHTING));
 
                     model.buildClassifier(data);
-                    /* */
+                    
                     if (model == null || data == null) {
                         System.out.println("ERROR: Model or data is null.");
                         continue;
