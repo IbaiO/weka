@@ -33,8 +33,16 @@ public class ApplyModel {
         System.out.println("Number of classes: " + testData.numClasses());
 
         NaiveBayes nb = loadModel(modelFilePath);
+        if (nb == null) {
+            System.out.println("ERROR: Failed to load model.");
+            return;
+        }
 
         Instances testDataNoClass = removeClassAttribute(testData);
+        if (testDataNoClass == null) {
+            System.out.println("ERROR: Failed to remove class attribute from test data.");
+            return;
+        }
 
         // Ensure class index is set correctly after removing class attribute
         if (testDataNoClass.classIndex() == -1) {
@@ -92,6 +100,11 @@ public class ApplyModel {
     }
 
     private static void applyModel(NaiveBayes model, Instances originalData, Instances dataNoClass, String outputPath) throws Exception {
+        if (model == null || originalData == null || dataNoClass == null) {
+            System.out.println("ERROR: Model, original data, or data without class is null.");
+            return;
+        }
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath))) {
             for (int i = 0; i < dataNoClass.numInstances(); i++) {
                 double pred = model.classifyInstance(dataNoClass.instance(i));

@@ -1,5 +1,4 @@
 import weka.classifiers.meta.AttributeSelectedClassifier;
-import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
@@ -8,8 +7,6 @@ import weka.attributeSelection.InfoGainAttributeEval;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.core.SerializationHelper;
-import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.Remove;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
