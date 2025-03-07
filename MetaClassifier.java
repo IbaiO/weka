@@ -2,8 +2,8 @@ import weka.classifiers.meta.AttributeSelectedClassifier;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
-import weka.attributeSelection.Ranker;
-import weka.attributeSelection.InfoGainAttributeEval;
+import weka.attributeSelection.BestFirst;
+import weka.attributeSelection.CfsSubsetEval;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.core.SerializationHelper;
@@ -49,8 +49,8 @@ public class MetaClassifier {
 
         // Train and save model using AttributeSelectedClassifier
         AttributeSelectedClassifier asc = new AttributeSelectedClassifier();
-        ASSearch search = new Ranker();
-        ASEvaluation eval = new InfoGainAttributeEval();
+        ASSearch search = new BestFirst();
+        ASEvaluation eval = new CfsSubsetEval();
         asc.setSearch(search);
         asc.setEvaluator(eval);
         asc.setClassifier(new NaiveBayes());
